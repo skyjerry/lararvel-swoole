@@ -2,32 +2,19 @@
 
 $http = new swoole_http_server("127.0.0.1", 9501);
 
-// $http->set(
-// 	[
-
-// 	]
-// );
-
-
 require __DIR__.'/../vendor/autoload.php';
 
 $app = require __DIR__.'/../bootstrap/app.php';
 
 $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 
-// $http->on('WorkerStart', function($server, $worker_id) {
-	
-	
-// });
-
 $http->on('request', function ($request, $response) use($app, $kernel) {
-
-	$_SERVER = [];
+    $_SERVER = [];
     $_SERVER['argv'] = [];
-	$_GET = [];
-	$_POST = [];
+    $_GET = [];
+    $_POST = [];
 
-	if (isset($request->server)) {
+    if (isset($request->server)) {
         foreach ($request->server as $k => $v) {
             $_SERVER[$k] = $v;
         }
@@ -51,21 +38,22 @@ $http->on('request', function ($request, $response) use($app, $kernel) {
         }
     }
 
-	ob_start();
+    ob_start();
 
-	$response_laravel = $kernel->handle(
-	    $request_laravel = Illuminate\Http\Request::capture()
-	);
+    $response_laravel = $kernel->handle(
+       $request_laravel = Illuminate\Http\Request::capture()
+   );
 
-	$response_laravel->send();
+    $response_laravel->send();
 
-	$kernel->terminate($request_laravel, $response_laravel);
+    $kernel->terminate($request_laravel, $response_laravel);
 
-	$result = ob_get_contents();
+    $result = ob_get_contents();
 
-	ob_clean();
+    ob_clean();
 
     $response->end($result);
+
 });
 
 $http->start();
