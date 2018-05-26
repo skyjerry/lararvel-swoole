@@ -23,6 +23,7 @@ $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
 $http->on('request', function ($request, $response) use($app, $kernel) {
 
 	$_SERVER = [];
+    $_SERVER['argv'] = [];
 	$_GET = [];
 	$_POST = [];
 
@@ -64,7 +65,7 @@ $http->on('request', function ($request, $response) use($app, $kernel) {
 
 	ob_clean();
 
-    $response->end(print_r($_SERVER));
+    $response->end($result);
 });
 
 $http->start();
